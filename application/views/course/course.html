@@ -1,0 +1,66 @@
+{extends file="../layout.tpl"}
+{block name=head}
+    <link rel="stylesheet" href="{$base_url}/lib/css/courseInfo.css">
+{/block}
+
+{block name=body}
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            课程信息
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4 col-xs-6">
+                    <div class="image" style="margin-bottom: 10px;">
+                        <img src="{$courseInfo['img_path']}" alt="" width="100%" height="100%">
+                    </div>
+                </div>
+                <div class="col-md-8 col-xs-6">
+                    <div class="row"><h3>{$courseInfo['course_name']}</h3></div>
+                    <div class="row">{$courseInfo['course_introduction']}</div>
+                </div>
+            </div>
+
+
+
+                {if isset($smarty.cookies.studentName) }
+                    {if $courseInfo['complete_exp_num'] <= 0 or $courseInfo['exp_num'] == 0}
+                        <button type="" class="btn btn-success" style="margin-top: 10px;" onclick="location.href='{$base_url}student/chooseCourse/{$courseInfo['course_id']}'">开始学习</button>
+                    {/if}
+                    {if $courseInfo['complete_exp_num'] > 0 and $courseInfo['exp_num'] != 0}
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {($courseInfo['complete_exp_num'] / $courseInfo['exp_num'] * 100)|round}%;">
+                            {($courseInfo['complete_exp_num'] / $courseInfo['exp_num'] * 100)|round}%
+                        </div>
+                    </div>
+                    {/if}
+                {/if}
+                {if isset($smarty.cookies.teacherName) && $courseInfo['teacher_name'] == $smarty.cookies.teacherName}
+                    <button type="" class="btn btn-success" style="margin-top: 10px;" onclick="location.href='{$base_url}teacher/addExperiment/{$courseInfo['course_id']}'">添加实验</button>
+                {/if}
+
+                <div class="embed-responsive embed-responsive-16by9">
+
+
+                            <ul class="list-group" style="margin-top: 10px;">
+                                {foreach from=$expInfo item=value}
+                                    <li class="list-group-item"  >
+                                        {$value['exp_name']}
+                                        <button class="btn btn-primary" style="float:right; margin:auto 2px;" onclick='"{$value['exp_doc_path']}"' >实验文档</button>
+
+                                        {$temp=""}
+                                        {if $courseInfo['complete_exp_num'] + 1 < $value['exp_num']}
+                                            {$temp = "disabled"}
+                                        {/if}
+
+                                        <button class="btn btn-primary {$temp}" style="float:right; margin:auto 2px;"  onclick='window.open("{$base_url}Experiment/showExperiment/{$value['exp_id']}/{$courseInfo['course_id']}/{$smarty.session.studentId}");'>开始实验</button>
+                                    </li>
+                                {/foreach}
+                            </ul>
+                </div>
+        </div>
+    </div>
+
+</div>
+{/block}
